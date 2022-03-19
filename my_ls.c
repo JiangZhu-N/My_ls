@@ -98,7 +98,6 @@ void Get_mode(struct dirent *file)
 
     stat(path, &buf);
 
-    char buf_time[32];
     struct passwd *user;
     struct group *group;
 
@@ -163,8 +162,6 @@ void Get_mode(struct dirent *file)
     struct tm *t = localtime(&buf.st_ctim.tv_sec);
 
     printf("%2d月%2d %02d:%02d  ", t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
-
-    buf_time[strlen(buf_time) - 1] = '\0'; //去掉换行符
 
     return;
 }
