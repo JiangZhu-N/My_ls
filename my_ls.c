@@ -151,7 +151,7 @@ void Get_mode(struct dirent *file)
 
     ////////////
     printf("%s\t", inf);
-    //通过用户和组id得到用户的信息和其所在组的信息
+
     user = getpwuid(buf.st_uid);
     group = getgrgid(buf.st_gid);
 
