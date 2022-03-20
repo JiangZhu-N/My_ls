@@ -18,13 +18,13 @@ int main(int argc, char *argv[])
     char *p;
     int openhide = 0;
     int linformation = 0;
-   // printf("\n%d\n%s\n\n", argc, argv[1]);
+    // printf("\n%d\n%s\n\n", argc, argv[1]);
     if (argc > 1 || argv[1] == "ls")
     {
         for (int i = 2; i < argc; i++)
         {
             p = argv[i];
-            
+
             if (*p == '-')
             {
                 for (int j = 0; j <= sizeof(argv[i]) / 4; j++)
@@ -149,7 +149,9 @@ void Get_mode(struct dirent *file)
         inf[9] = 'x';
 
     ////////////
-    printf("%s\t", inf);
+    printf("%8ld  ", buf.st_ino);
+
+    printf("%s  ", inf);
 
     user = getpwuid(buf.st_uid);
     group = getgrgid(buf.st_gid);
@@ -161,7 +163,7 @@ void Get_mode(struct dirent *file)
 
     struct tm *t = localtime(&buf.st_ctim.tv_sec);
 
-    printf("%2d月%2d %02d:%02d  ", t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
+    // printf("%2d月%2d %02d:%02d  ", t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
 
     return;
 }
