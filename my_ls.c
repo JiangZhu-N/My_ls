@@ -10,9 +10,10 @@
 #include <pwd.h>
 #include <grp.h>
 
-void ls(int oh, int infor, int ino);
-void Get_mode(struct dirent *file);
+void ls(int oh, int infor, int ino, int sum);
+void Get_mode(struct dirent *file, int sum);
 void fino(struct dirent *file);
+void fsum(int sum);
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +21,8 @@ int main(int argc, char *argv[])
     int openhide = 0;
     int linformation = 0;
     int ino = 0;
-    // printf("\n%d\n%s\n\n", argc, argv[1]);
+    int sum = 0;
+
     if (argc > 1 || argv[1] == "ls")
     {
         for (int i = 2; i < argc; i++)
@@ -43,17 +45,21 @@ int main(int argc, char *argv[])
                     {
                         ino = 1;
                     }
+                    if (*p == 's')
+                    {
+                        sum = 1;
+                    }
                     p++;
                 }
             }
         }
-        ls(openhide, linformation, ino);
+        ls(openhide, linformation, ino, sum);
     }
 
     return 0;
 }
 
-void ls(int oh, int infor, int ino)
+void ls(int oh, int infor, int ino, int sum)
 {
     DIR *dir;
     struct dirent *ptr;
@@ -68,7 +74,7 @@ void ls(int oh, int infor, int ino)
             if (ino)
                 fino(ptr);
             if (infor)
-                Get_mode(ptr);
+                Get_mode(ptr, sum);
             printf("%s\n", ptr->d_name);
         }
     }
@@ -82,7 +88,7 @@ void ls(int oh, int infor, int ino)
                 if (ino)
                     fino(ptr);
                 if (infor)
-                    Get_mode(ptr);
+                    Get_mode(ptr, sum);
                 printf("%s\n", ptr->d_name);
             }
         }
@@ -91,7 +97,7 @@ void ls(int oh, int infor, int ino)
 
     return;
 }
-void Get_mode(struct dirent *file)
+void Get_mode(struct dirent *file, int sum)
 {
 
     // struct tm *t;
@@ -159,6 +165,9 @@ void Get_mode(struct dirent *file)
         inf[9] = 'x';
 
     ////////////
+
+    if (sum)
+        printf("%4ld ", buf.st_blocks / 2);
 
     printf("%s  ", inf);
 
