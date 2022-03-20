@@ -10,14 +10,16 @@
 #include <pwd.h>
 #include <grp.h>
 
-void ls(int oh, int infor);
+void ls(int oh, int infor, int ino);
 void Get_mode(struct dirent *file);
+void fino(struct dirent *file);
 
 int main(int argc, char *argv[])
 {
     char *p;
     int openhide = 0;
     int linformation = 0;
+    int ino = 0;
     // printf("\n%d\n%s\n\n", argc, argv[1]);
     if (argc > 1 || argv[1] == "ls")
     {
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
 
             if (*p == '-')
             {
-                for (int j = 0; j <= sizeof(argv[i]) / 4; j++)
+                for (int j = 0; j <= sizeof(argv[i]) / 2; j++)
                 {
                     if (*p == 'a')
                     {
@@ -37,17 +39,21 @@ int main(int argc, char *argv[])
                     {
                         linformation = 1;
                     }
+                    if (*p == 'i')
+                    {
+                        ino = 1;
+                    }
                     p++;
                 }
             }
         }
-        ls(openhide, linformation);
+        ls(openhide, linformation, ino);
     }
 
     return 0;
 }
 
-void ls(int oh, int infor)
+void ls(int oh, int infor, int ino)
 {
     DIR *dir;
     struct dirent *ptr;
@@ -59,6 +65,8 @@ void ls(int oh, int infor)
     {
         while ((ptr = readdir(dir)) != NULL)
         {
+            if (ino)
+                fino(ptr);
             if (infor)
                 Get_mode(ptr);
             printf("%s\n", ptr->d_name);
@@ -71,6 +79,8 @@ void ls(int oh, int infor)
 
             if (*(ptr->d_name) != hide)
             {
+                if (ino)
+                    fino(ptr);
                 if (infor)
                     Get_mode(ptr);
                 printf("%s\n", ptr->d_name);
@@ -149,7 +159,6 @@ void Get_mode(struct dirent *file)
         inf[9] = 'x';
 
     ////////////
-    printf("%8ld  ", buf.st_ino);
 
     printf("%s  ", inf);
 
@@ -163,7 +172,25 @@ void Get_mode(struct dirent *file)
 
     struct tm *t = localtime(&buf.st_ctim.tv_sec);
 
-    // printf("%2d月%2d %02d:%02d  ", t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
+    printf("%2d月%2d %02d:%02d  ", t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min);
 
+    return;
+}
+void fino(struct dirent *file)
+{
+    // printf("!!!!!!!!!!!!!!!!!!");
+    struct stat buf;
+
+    //获取工作路径
+    char path[100];
+    getcwd(path, sizeof(path));
+
+    //合成文件绝对路径
+    strcat(path, "/");
+    strcat(path, file->d_name);
+    // printf("%s\n", path);
+
+    stat(path, &buf);
+    printf("%8ld  ", buf.st_ino);
     return;
 }
